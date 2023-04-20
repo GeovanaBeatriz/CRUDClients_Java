@@ -2,9 +2,7 @@ package com.geovanabeatriz.ClientsCrud.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale.Category;
-
-import javax.transaction.Transactional;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.geovanabeatriz.ClientsCrud.dto.ClientDTO;
 import com.geovanabeatriz.ClientsCrud.entities.Client;
 import com.geovanabeatriz.ClientsCrud.repositories.ClientRepository;
+import com.geovanabeatriz.ClientsCrud.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ClientService {
@@ -29,5 +28,12 @@ public class ClientService {
 		} //Convertendo em dto
 		
 		return listDto;
+	}
+	
+	
+	public ClientDTO findById(Long id) {
+		Optional<Client> obj = repository.findById(id); //puxa do banco de dados
+		Client entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found")); //Não achou id
+		return new ClientDTO(entity);
 	}
 }
