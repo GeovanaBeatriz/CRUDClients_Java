@@ -7,12 +7,15 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.geovanabeatriz.ClientsCrud.dto.ClientDTO;
 import com.geovanabeatriz.ClientsCrud.entities.Client;
 import com.geovanabeatriz.ClientsCrud.repositories.ClientRepository;
+import com.geovanabeatriz.ClientsCrud.services.exceptions.DatabaseException;
 import com.geovanabeatriz.ClientsCrud.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -67,5 +70,17 @@ public class ClientService {
 			catch(EntityNotFoundException e) {
 				throw new ResourceNotFoundException("id not found");
 			}
+	}
+	
+	public void delete(Long id) {
+		try {
+		repository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Id not found " + id); 
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Integrity violation"); 
+		}
 	}
 }
